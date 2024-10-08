@@ -135,6 +135,102 @@ Looking for the perfect BPM or key for a new EDM track?
 
 A completely free open-source web service from the author of Matchering.
 
+=============================================================================================================================================================================
+
+GUI for Windows
+
+PySimpleGUI-based GUI for Matchering
+
+I've created a simple GUI for Matchering using PySimpleGUI. This solution provides an easy-to-use interface for those who prefer a graphical approach over command-line usage.
+
+Features:
+- Select target and reference tracks via file browser
+- Choose output formats (16-bit WAV, 24-bit WAV, or both)
+- Simple 'Process' button to start Matchering
+- Error handling and completion notifications
+
+Requirements:
+- Python 3.x
+- PySimpleGUI
+- Matchering
+
+A. Install matchering as per instructions 
+
+python -m pip install -U matchering
+
+B. Install GUI
+pip install PySimpleGUI matchering
+
+C. Save the code below in a file called  
+matchering_gui.py
+
+in your matchering folder.
+
+-----------------------------------------------------------------------------------------------
+
+> import PySimpleGUI as sg
+> import matchering as mg
+> 
+> def create_window():
+>     layout = [
+>         [sg.Text('Target Track:'), sg.Input(key='-TARGET-'), sg.FileBrowse()],
+>         [sg.Text('Reference Track:'), sg.Input(key='-REFERENCE-'), sg.FileBrowse()],
+>         [sg.Text('Output Formats:')],
+>         [sg.Checkbox('16-bit WAV', default=True, key='-16BIT-'),
+>          sg.Checkbox('24-bit WAV', default=False, key='-24BIT-')],
+>         [sg.Button('Process'), sg.Button('Exit')]
+>     ]
+>     return sg.Window('Matchering GUI', layout)
+> 
+> def main():
+>     window = create_window()
+> 
+>     while True:
+>         event, values = window.read()
+>         if event == sg.WINDOW_CLOSED or event == 'Exit':
+>             break
+>         if event == 'Process':
+>             target = values['-TARGET-']
+>             reference = values['-REFERENCE-']
+>             results = []
+>             if values['-16BIT-']:
+>                 results.append(mg.pcm16(f"{target.rsplit('.', 1)[0]}_master_16bit.wav"))
+>             if values['-24BIT-']:
+>                 results.append(mg.pcm24(f"{target.rsplit('.', 1)[0]}_master_24bit.wav"))
+> 
+>             if not target or not reference or not results:
+>                 sg.popup('Please fill in all fields and select at least one output format.')
+>                 continue
+> 
+>             try:
+>                 mg.log(print)
+>                 mg.process(
+>                     target=target,
+>                     reference=reference,
+>                     results=results,
+>                 )
+>                 sg.popup('Processing complete!')
+>             except Exception as e:
+>                 sg.popup_error(f'An error occurred: {str(e)}')
+> 
+>     window.close()
+> 
+> if __name__ == '__main__':
+>     main()
+
+------------------------------------------------------------------------------------------------
+
+Usage:
+1. Double click the file to run the script: `python matchering_gui.py`
+2. Use the GUI to select files and process audio
+3. Enjoy!
+
+This GUI provides a user-friendly alternative to command-line usage and might be helpful for users who prefer graphical interfaces. It's ugly as sin, but does the job.
+
+I take no responsibility at all, it's all Claude Sonnet 3.5's fault. :)
+
+==================================================================================================================================================================================
+
 ## A Coffee
 
 If our package saved your time or money, you may:
